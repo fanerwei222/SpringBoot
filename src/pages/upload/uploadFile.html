@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<input type="file" multiple="multiple" name="" value="点击">
+</body>
+<script type="text/javascript">
+//bolbOrFile : 要上传的文件; fileType : 上传文件类型; id : 文件id,根据uuid生成; j : 当前上传模块的位置; chunks : 文件切块数量; endLocation : 最后一块标记;
+function upload(blobOrFile, fileType , id, j, chunks, endLocation) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://192.168.0.222:8080/hello?lastSuffix='+ fileType + '&id=' +id + '&location=' + j + '&size=' + chunks + '&endLocation=' + endLocation, true);
+        xhr.onload = function(e) {
+          //alert(11111)
+        };
+        xhr.send(blobOrFile);
+        console.log(blobOrFile)
+      }
+
+      document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+        for (var i = 0; i < this.files.length; i++) {
+          var blob = this.files[i];
+          var id = uuid();
+          var j = 0;
+
+          console.log(blob.type);
+          var fileType = blob.type;
+
+        var BYTES_PER_CHUNK = 1024 * 1024 * 1; // 1MB chunk sizes.
+        var SIZE = blob.size;
+        var chunks = Math.ceil(SIZE/BYTES_PER_CHUNK);
+        var start = 0;
+        var end = BYTES_PER_CHUNK;
+        var endLocation = 0;
+        while(start < SIZE) {
+            if (j == chunks - 1){
+                //设置最后一块数据的标记符
+                endLocation = 1;
+            }
+          upload(blob.slice(start, end), fileType, id, j, chunks, endLocation);
+          j++;
+          console.log(j);
+          start = end;
+          end = start + BYTES_PER_CHUNK;
+        }
+        }
+        j=0;
+        endLocation = 0;
+      }, false);
+
+      function uuid() {
+  var s = [];
+  var hexDigits = "0123456789abcdef";
+  for (var i = 0; i < 36; i++) {
+    s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+  }
+  s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+  s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+  s[8] = s[13] = s[18] = s[23] = "-";
+ 
+  var uuid = s.join("");
+  return uuid;
+}
+
+</script>
+</html>
