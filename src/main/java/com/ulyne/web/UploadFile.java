@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * 自己写的一个文件上传的方法...但是目前还是有点小问题. .. 还在找出问题的关键所在... 请勿用在实际项目中
  * Created by fanwei_last on 2017/10/27.
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
