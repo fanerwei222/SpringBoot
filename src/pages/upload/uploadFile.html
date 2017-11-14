@@ -2,15 +2,16 @@
 <html>
 <head>
   <title></title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 </head>
 <body>
 <input type="file" multiple="multiple" name="" value="点击">
 </body>
 <script type="text/javascript">
 //bolbOrFile : 要上传的文件; fileType : 上传文件类型; id : 文件id,根据uuid生成; j : 当前上传模块的位置; chunks : 文件切块数量; endLocation : 最后一块标记;
-function upload(blobOrFile, fileType , id, j, chunks, endLocation) {
+function upload(blobOrFile, fileName, fileType , id, j, chunks, endLocation) {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://192.168.0.222:8080/hello?lastSuffix='+ fileType + '&id=' +id + '&location=' + j + '&size=' + chunks + '&endLocation=' + endLocation, true);
+        xhr.open('POST', 'http://192.168.0.222:8080/hello?fileName=' + encodeURIComponent(fileName) + '&lastSuffix='+ fileType + '&id=' +id + '&location=' + j + '&size=' + chunks + '&endLocation=' + endLocation, true);
         xhr.onload = function(e) {
           //alert(11111)
         };
@@ -24,8 +25,9 @@ function upload(blobOrFile, fileType , id, j, chunks, endLocation) {
           var id = uuid();
           var j = 0;
 
-          console.log(blob.type);
+          console.log(blob.name);
           var fileType = blob.type;
+          var fileName = blob.name;
 
         var BYTES_PER_CHUNK = 1024 * 1024 * 1; // 1MB chunk sizes.
         var SIZE = blob.size;
@@ -38,7 +40,7 @@ function upload(blobOrFile, fileType , id, j, chunks, endLocation) {
                 //设置最后一块数据的标记符
                 endLocation = 1;
             }
-          upload(blob.slice(start, end), fileType, id, j, chunks, endLocation);
+          upload(blob.slice(start, end), fileName, fileType, id, j, chunks, endLocation);
           j++;
           console.log(j);
           start = end;
