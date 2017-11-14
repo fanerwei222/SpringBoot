@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
  * 自己写的一个文件上传的方法...但是目前还是有点小问题. .. 还在找出问题的关键所在... 请勿用在实际项目中;
  * 经过自己本人的测试. 初步可以进行常规文件的上传.图片..视频等..
+ * 整体思路:前端分块上传文件, 服务端进行拼装,等到同一个文件所有的临时文件都传好之后再进行拼装.
  * Created by fanwei_last on 2017/10/27.
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,12 +40,20 @@ public class UploadFile {
         String size = request.getParameter("size");
         //最后一块文件的标记符
         String endLocation = request.getParameter("endLocation");
+        //获取文件名
+        String fileName = request.getParameter("fileName");
+
         // 这里是为了获取文件扩展名
         String lastSuffix = request.getParameter("lastSuffix");
         String[] lastTemp = lastSuffix.split("\\/");
         String extention = lastTemp[lastTemp.length-1];
 
-        OutputStream out = new FileOutputStream(path + "\\" + id + location + ".tmp");
+        /**
+         * 这里两次命名文件是为了等待文件输出流全部输出完毕之后再创建文件名带有id的临时文件,以供拼装用.如果这里直接用带有id的名称,当文件输出流未完全关闭时就会开始做拼装处理.
+         */
+        String uuid = UUID.randomUUID().toString();
+        File uuidFile = new File(path + "\\" + uuid + location + ".tmp");
+        OutputStream out = new FileOutputStream(uuidFile);
         int len = -1;
         byte[] buffer = new byte[1024];
 
@@ -53,11 +63,13 @@ public class UploadFile {
 
         in.close();
         out.close();
+        File idfFle = new File(path + "\\" + id + location + ".tmp");
+        uuidFile.renameTo(idfFle);
         /**
          * 如果收到一个文件的结束标记符,则开始组装该文件
          */
         int sizeIn = Integer.valueOf(size);
-        assembleFile(id, path, extention, sizeIn);
+        assembleFile(id, path, fileName, extention, sizeIn);
 
         /*String path_init = request.getSession().getServletContext().getRealPath("/");
         File file_init=new File(path_init);
@@ -108,7 +120,7 @@ public class UploadFile {
      * 组装文件, 需要文件的id, 文件夹路径, 后缀
      * @param id
      */
-    public void assembleFile(String id, String path, String  extention, int size){
+    public void assembleFile(String id, String path, String fileName, String  extention, int size){
         File file = new File(path);
         String[] filelist = file.list();
         List<File> files = new ArrayList<>();
@@ -145,7 +157,7 @@ public class UploadFile {
             Collections.sort(files, fileComparator);
             OutputStream out = null;
             try {
-                out = new FileOutputStream(path + "\\" + id + "." + extention);
+                out = new FileOutputStream(path + "\\" + fileName);
                 bufferedOutputStream = new BufferedOutputStream(out);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
