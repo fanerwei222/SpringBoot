@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>萤石开发平台直播视频-沄软科技接入demo</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!--JS-->
+		<!--1.引入ezuikit.js,该操作需要联网获取js,以使用ezuiplayer组件.-->
+		<script src="https://open.ys7.com/sdk/js/1.1/ezuikit.js"></script>
+		<script src="../js/jquery-2.1.4.min.js"></script>
+		<style type="text/css">
+			/*设置body的宽度以使用百分比*/
+			body {
+				margin: 0;
+				width: 100%;
+				height: 100%;
+			}
+			
+			#video:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+			
+			#video {
+				width: 100%;
+				height: 100%;
+				*zoom: 1;
+			}
+			
+			#video>div {
+				float: left;
+				display: inline-block;
+				border: 1px solid orange;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<!--2.设置一个div提供video标签的添加使用.-->
+		<div id="video"></div>
+		<!--<video id="myPlayer1" poster="" controls playsInline webkit-playsinline autoplay>
+			<source src="rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b" type="" />
+		</video>-->
+		<script type="text/javascript">
+			/*视频协议地址数组,使用的时候需要更换成自己的视频直播协议地址,也可而已根据需要传入数组作为函数参数,此处不做处理,开发者自行更改,有n个元素便提供n个video标签.*/
+			var arry = ["rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b", "rtmp://rtmp.open.ys7.com/openlive/f01018a141094b7fa138b9d0b856507b"];
+            var arrS=[];
+            /*打开视频的函数,通过取数组来进行video标签的添加,进行个数的适配*/
+			function openVideo() {
+				$("#video").html("");
+				var WHvideo;
+				var size = arry.length;
+				if(size == 1) {
+					WHvideo = "100%";
+				} else if(size > 1 && size <= 4) {
+					WHvideo = "50%";
+				} else {
+					WHvideo = "33.33%";
+				}
+				for(var i = 0; i < arry.length; i++) {
+					var id = "myPlayer" + (i + 1);
+					/*直接使用src属性*/
+					var str = $('<video id="' + id + '" src="' + arry[i] + '"  poster="" controls autoplay playsInline webkit-playsinline > </video>');
+					/*使用source*/
+					//var str = $('<video id="' + id + '"  poster="" controls autoplay playsInline webkit-playsinline ><source src="' + arry[i] + '" type="application/x-mpegURL" /> </video>');
+					$("#video").append(str);
+				}
+				$("video").css({
+					"width": WHvideo,
+					"height": WHvideo
+				});
+				Wvideo=$('video').width()-3;
+				Hvideo=$('video').height()-2;
+				$("video").css({
+					"width": Wvideo,
+					"height": Hvideo
+				});
+				for(var j = 0; j < arry.length; j++) {
+					var idS = "myPlayer" + (j + 1);
+					var plays=new EZUIPlayer(idS);
+					arrS.push(plays)
+				}
+			}
+			openVideo();
+		</script>
+	</body>
+
+</html>
