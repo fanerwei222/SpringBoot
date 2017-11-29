@@ -11,7 +11,7 @@
 //bolbOrFile : 要上传的文件; fileType : 上传文件类型; id : 文件id,根据uuid生成; j : 当前上传模块的位置; chunks : 文件切块数量; endLocation : 最后一块标记;
 function upload(blobOrFile, fileName, fileType , id, j, chunks, endLocation) {
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'http://192.168.0.222:8080/hello?fileName=' + encodeURIComponent(fileName) + '&lastSuffix='+ fileType + '&id=' +id + '&location=' + j + '&size=' + chunks + '&endLocation=' + endLocation, true);
+        xhr.open('POST', 'http://192.168.0.222:8080/uploadFile?fileName=' + encodeURIComponent(fileName) + '&lastSuffix='+ fileType + '&id=' +id + '&location=' + j + '&size=' + chunks + '&endLocation=' + endLocation, true);
         xhr.onload = function(e) {
           //alert(11111)
         };
