@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * Created by fanwei_last on 2017/10/31.
@@ -21,6 +22,11 @@ public class Property {
         resolver.setMaxInMemorySize(40960);
         resolver.setMaxUploadSize(50*1024*1024);//上传文件大小 50M 50*1024*1024
         return resolver;
+    }
+
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
     }
 
 }
