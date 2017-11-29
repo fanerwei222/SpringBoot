@@ -21,9 +21,9 @@ import java.util.*;
 @EnableAutoConfiguration
 public class UploadFile {
 
-    @RequestMapping(value = "/hello", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> hello(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public Map<String, Object> uploadFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> result = new HashMap<>();
         response.addHeader("Access-Control-Allow-Origin","*");
         response.addHeader("Access-Control-Allow-Headers","X-Requested-With");
