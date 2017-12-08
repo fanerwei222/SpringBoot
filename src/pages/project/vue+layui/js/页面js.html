@@ -1,0 +1,155 @@
+
+    <script src="/content/js/vue.js"></script>
+    <script src="/layui/layui.all.js"></script>
+	<script src="/laypage/laypage.js"></script>
+	<link rel="stylesheet" type="text/css" href="/layui/css/layui.css"></link>
+
+<html>
+<div id="points" class="content-woppper-table">
+ <li><a onclick="linkbt('addPointBit')" href="javascript:;" class="btn"><i class="icon Hui-iconfont">&#xe600;</i><span>添加</span></a></li>
+  <tr v-for="item in list" >
+  <td>{{item.name}}</td>
+
+  <a onclick="linkbt('.html')" href="javascript:;" v-on:click="editPoint(item.id)" ><i class="icon Hui-iconfont">&#xe6df;</i>修改</a>
+
+
+  		<!-- 分页 -->
+        <div class="mt20"><ul class="page clearfix" maxshowpageitem="5" pagelistcount="10"  id="page"></ul></div> 
+        <!-- 分页 -->
+</html>
+
+<script>
+//获取上下文路径
+function getContextPath(){   
+    var pathName = document.location.pathname;   
+    var index = pathName.substr(1).indexOf("/");   
+    var result = pathName.substr(0,index+1);   
+    return result;   
+}
+var ctx = getContextPath();
+var data = {
+		list:[],
+};
+var requestData = {};
+var obj = {
+		pages : 3,
+		pageNow : 1
+	}
+$(document).ready(function(){
+	
+	$.ajax({//获取列表数据
+		url : ctx +'/homeListData?currentPageNo='+obj.pageNow,
+		async : false,
+		dataType : 'json',
+		type:'post',
+		data : {
+
+		},
+		success : function(responseText) {
+			data.list = responseText.data;
+			console.log(data.list);
+			obj.pages = responseText.totalPage;
+			obj.pageNow = responseText.currentPage;
+			console.log(obj.pages + "总数和当前页码" + obj.pageNow);
+			//如果只有一页给出提示信息
+			if (obj.pages == 1) {
+				$("#page").html("没有更多了");
+			}
+		}
+	}); 
+	
+	var vm = new Vue({
+		el : '#points',
+		data : data,
+		methods : {
+			deletePoint : function(id) {//删除操作
+				//alert(id);
+				requestData.id = id;
+				layer.confirm('确认删除?', {icon: 3, title:'提示'}, function(index){
+					  //do something
+					  //删除函数
+					if(postAjax('deleteAppPlatform', requestData).success){
+						layer.close(index);
+						window.location.href = ctx +'/platformIndex';
+					}
+				});
+			},
+			editPoint : function(id){//编辑操作
+				window.location.href = ctx + '/editPointBit?id='+id;
+			}
+
+			
+		}
+	});
+	
+	
+	//同步ajax post请求
+	function postAjax(url, data){
+		var res = '';
+		$.ajax({
+			url : ctx + '/'+url,
+			async : false,
+			dataType : 'json',
+			type:'post',
+			data : data,
+			success : function(responseText) {
+				res = responseText;
+			}
+		});
+		return res;
+	};//**
+
+	//异步ajax post请求
+	function postAjaxAsync(url, data){
+		var res = '';
+		$.ajax({
+			url : ctx + '/'+url,
+			async : true,
+			dataType : 'json',
+			type:'post',
+			data : data,
+			success : function(responseText) {
+				res = responseText;
+			}
+		});
+		return res;
+	};//**
+	
+	laypage({
+		cont : 'page',
+		pages : obj.pages,
+		curr : obj.pageNow,
+		first : false,
+		last : false,
+		skip : true,
+		jump : function(obj, first) {
+			//得到了当前页，用于向服务端请求对应数据
+			var curr = obj.curr;
+			if (!first) {
+				//location.href = 'list.do?pageNow='+curr;  
+				$.ajax({
+					url : ctx + '/homeListData?currentPageNo=' + curr,
+					async : false,
+					dataType : 'json',
+					type:'post',
+					success : function(responseText) {
+						console.log(responseText);
+						data.list = responseText.data;
+						obj.pages = responseText.totalPage;
+						obj.pageNow = responseText.currentPage;
+						console.log(obj.pages + "总数和当前页码" + obj.pageNow);
+						//如果只有一页给出提示信息
+						if (obj.pages == 1) {
+							$("#page").html("没有更多了");
+						}
+					}
+				});
+			}
+		}
+	});
+	
+});
+
+	
+	
+</script>

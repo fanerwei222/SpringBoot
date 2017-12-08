@@ -1,0 +1,92 @@
+	
+
+	
+
+
+	//分页数据写法
+	@RequestMapping(value="/xxData", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> xxData(HttpServletRequest request, Model model){
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		List<ClickPoint> cList = clickPointSerive.getAllClickPoints();
+		result.put("isError", "1");
+
+		try {
+			String currentPageNo = StringUtil.trimBlank(RequestUtils.getQueryParam(request, "currentPageNo")); // 当前页数
+			String pageSize = StringUtil.trimBlank(RequestUtils.getQueryParam(request, "pageSize")); // 当前页总数
+
+				// 根据条件查询
+				Map<String, Object> m = new HashMap<>();
+				int selCnt = cList.size();
+				System.out.println("个数："+selCnt);
+				if (selCnt > 0) {
+                    
+                    if (StringUtil.isNullorEmpty(pageSize) || !NumberUtil.isInt(pageSize, false)) {
+                        pageSize = "10";
+                    }
+                    if (StringUtil.isNullorEmpty(currentPageNo) || !NumberUtil.isInt(currentPageNo, false)) {
+                        currentPageNo = "1";
+                    }
+                    
+                    int iPageNo = Integer.parseInt(currentPageNo);
+                    int iPageSize = Integer.parseInt(pageSize);
+                    PageHelper.startPage(iPageNo, iPageSize, "p.modifyTime desc");              
+                    
+                    // 查询
+                    List<ClickPoint> list= this.clickPointSerive.getAllClickPoints();
+                    
+                    if(null!=list){
+            			PageInfo<ClickPoint> pageInfo=new PageInfo<>(list);			
+            			result.put("totalCount", pageInfo.getTotal());
+            			result.put("currentPage", pageInfo.getPageNum());
+            			result.put("pageSize", pageInfo.getPageSize());
+            			result.put("totalPage", pageInfo.getPages());
+            			result.put("data", pageInfo.getList());
+            			result.put("success", true);
+            			
+            			result.put("isError", "0");
+            		}else{
+            			result.put("isError", "1");
+            			result.put("msg", "没有查询到数据");
+            		}		
+              
+                } else {
+                    result.put("data", null);
+                }
+		} catch (Exception ex) {
+			result.put("msg", "系统错误！查询信息失败，请刷新页面后重试");
+		}
+		
+		return result;
+	}
+
+
+
+	//普通写法
+	@RequestMapping(value="/xxData", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> xxData(HttpServletRequest request, Model model){
+		
+		Map<String, Object> result = new HashMap<>();
+
+		if (condition) {
+		
+			result.put("success", true);
+		}else {
+			result.put("success", false);
+			result.put("message", "xx操作失败！");
+			}
+		return result;
+	}
+
+	//页面写法
+	@RequestMapping(value="/")
+	public String xx(Model model) {
+		
+		return "/";
+	}
+	
+
+

@@ -1,0 +1,47 @@
+	/**
+	 * 上传：上传监测点图标
+	 * @Description:TODO
+	 * @author:fanwei
+	 * @time:2017年8月25日 上午11:25:02
+	 * @param: @param request
+	 * @param: @return
+	 * @return: Map<String,Object>
+	 * @throws UnknownHostException 
+	 */
+	@RequestMapping(value="/uploadIconUrl", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> uploadIconUrl(@RequestParam(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws UnknownHostException{
+		
+		Map<String, Object> result = new HashMap<>();
+		String path_init = request.getSession().getServletContext().getRealPath("/");
+		File file_init=new File(path_init);
+		
+        String str = UUIdUtil.getUUID();
+		String path  =file_init.getParent()+"\\upload\\";
+		System.out.println("文件上传路径：" + path);
+		String fileName =file.getOriginalFilename();
+		String fileNameTar =  str+fileName;
+		String fileUrlMd5 = MD5Util.getMD5(fileNameTar);
+		File targetFile = new File(path, fileUrlMd5);
+		if(!targetFile.exists()){  
+            targetFile.mkdirs();  
+        } 
+		//保存文件 
+        try {  
+            file.transferTo(targetFile);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        InetAddress inetAddress =InetAddress.getLocalHost();
+        String localCanonicalIp =inetAddress.getHostAddress();
+        int localPort = request.getLocalPort();
+        
+        String fileUrl = "http://"+localCanonicalIp+":"+localPort+"/upload/"+fileUrlMd5;
+		
+        result.put("fileUrl", fileUrl);
+        result.put("fileTargetUrl", "/upload/"+fileUrlMd5);
+		result.put("fileName", fileName);
+		result.put("success", true);
+		
+		return result;
+	}

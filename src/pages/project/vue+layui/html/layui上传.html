@@ -1,0 +1,42 @@
+layui.use('upload', function(){
+    		  var upload = layui.upload;
+    		   
+    		  //执行实例
+    		  var uploadIcon = upload.render({
+    		    elem: '#iconBtn' //绑定元素
+    		    ,url: ctx +'/uploadIconUrl' //上传接口
+    		    ,done: function(res){
+    		      //上传完毕回调
+    		      //alert(res.success)
+    		      if (res.success) {
+						$("#iconInput").val(res.fileTargetUrl);
+					}
+    		    }
+    		    ,error: function(){
+    		      //请求异常回调
+    		    }
+    		  });
+    		  
+    		  var uploadImg = upload.render({
+      		    elem: '#imgBtn' //绑定元素
+      		    ,url: ctx +'/uploadIconUrl' //上传接口
+      		    ,done: function(res){
+      		      //上传完毕回调
+      		      //alert(res.success)
+      		      if (res.success) {
+  						$("#imgInput").val(res.fileTargetUrl);
+  					}
+      		    }
+      		    ,error: function(){
+      		      //请求异常回调
+      		    }
+      		  });
+    		  
+    		  
+    		});
+
+
+        <button type="button" class="layui-btn"
+                id="iconBtn">
+                <i class="layui-icon" id="iconUrl">&#xe67c;</i>上传图片
+             </button>
