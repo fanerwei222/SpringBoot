@@ -1,10 +1,10 @@
 # SpringBoot
 使用SpringBoot进行一些小东西试验.
 
-# 声明 : 
+## 声明 : 
 请勿用于任何实际项目中! 因为还有许多未知的BUG...
 
-# bean类的配置 //com/ulyne/property/Property
+## bean类的配置 //com/ulyne/property/Property
 有配置
 
 # 数据库/端口/静态资源文件配置 //application.properties
