@@ -51,11 +51,11 @@
         var point = res.data;
         console.log("--------------******-----------");
         var map = new BMap.Map("mapContent"); // 创建Map实例
-        map.setMapStyle({style:'light'});
-        map.centerAndZoom(new BMap.Point(108.867261,19.088807), 13); // 初始化地图,设置中心点坐标和地图级别
-        map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
-        map.setCurrentCity("海口"); // 设置地图显示的城市 此项是必须设置的
-        map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        BaiDuMap.setMapStyle({style:'light'});
+        BaiDuMap.centerAndZoom(new BMap.Point(108.867261,19.088807), 13); // 初始化地图,设置中心点坐标和地图级别
+        BaiDuMap.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+        BaiDuMap.setCurrentCity("海口"); // 设置地图显示的城市 此项是必须设置的
+        BaiDuMap.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
         // 添加带有定位的导航控件
         var navigationControl = new BMap.NavigationControl({
             // 靠左上角位置
@@ -65,7 +65,7 @@
             // 启用显示定位
             enableGeolocation : true
         });
-        map.addControl(navigationControl);
+        BaiDuMap.addControl(navigationControl);
         // 添加定位控件
         var geolocationControl = new BMap.GeolocationControl();
         geolocationControl.addEventListener("locationSuccess", function(e) {
@@ -88,14 +88,14 @@
             ],
             {strokeColor:"#1E90FF", strokeWeight:6, strokeOpacity:0.9, enableMassClear:false}
         );
-        map.addControl(geolocationControl);
+        BaiDuMap.addControl(geolocationControl);
         //调用设置图标方法设置从服务器获取到的图标
         ListPoint(point);
 
         //循环设置图标
         function ListPoint(point){
             //创建图标前先清除地图覆盖物
-            map.clearOverlays();
+            BaiDuMap.clearOverlays();
             //设置图标
             for(var i = 0;i<point.length;i++){
                 //创建图标
@@ -131,9 +131,9 @@
                 "</div>";
             var infoWindow = new BMap.InfoWindow(sContent);  // 创建信息窗口对象
             marker.addEventListener("click", function(){
-                map.openInfoWindow(infoWindow,point);
+                BaiDuMap.openInfoWindow(infoWindow,point);
             },false);
-            map.addOverlay(marker); //添加标注进地图
+            BaiDuMap.addOverlay(marker); //添加标注进地图
             //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
             markerArr.push(marker);
 
@@ -141,9 +141,9 @@
 
         //最简单的用法，生成一个marker数组，然后调用markerClusterer类即可。
         //var markerClusterer = new BMapLib.MarkerClusterer(map, {markers:markerArr});
-        map.addOverlay(polyline);
+        BaiDuMap.addOverlay(polyline);
         //单击获取点击的经纬度
-        map.addEventListener("click",function(e){
+        BaiDuMap.addEventListener("click",function(e){
             //console.log(e.point.lng + "," + e.point.lat);
             //alert(e.point.lng + "," + e.point.lat);
         });
@@ -240,7 +240,7 @@
                 //map.setZoom(map.getZoom() + 2);
             }
             // 添加DOM元素到地图中
-            map.getContainer().appendChild(div);
+            BaiDuMap.getContainer().appendChild(div);
             var first = true;
 
             // 将DOM元素返回
@@ -249,7 +249,7 @@
         // 创建控件
         var myZoomCtrl = new ZoomControl();
         // 添加到地图当中
-        map.addControl(myZoomCtrl);
+        BaiDuMap.addControl(myZoomCtrl);
         //切换点位类型
         $("#chooseClassic li").click(function(){
             $(this).addClass('selected').siblings().removeClass('selected');
@@ -262,7 +262,7 @@
             var resData = res.data;
             var lon = resData[0].longitude;
             var lat = resData[0].latitude;
-            map.centerAndZoom(new BMap.Point(lon,lat), 18); // 设置中心点坐标和地图级别
+            BaiDuMap.centerAndZoom(new BMap.Point(lon,lat), 18); // 设置中心点坐标和地图级别
         });
 
 
