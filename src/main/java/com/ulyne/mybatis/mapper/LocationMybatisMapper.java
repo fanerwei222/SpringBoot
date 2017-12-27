@@ -1,6 +1,6 @@
 package com.ulyne.mybatis.mapper;
 
-import com.ulyne.mybatis.model.Location;
+import com.ulyne.mybatis.model.LocationMybatis;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -11,8 +11,8 @@ import java.util.List;
  * Created by fanwei_last on 2017/12/27.
  */
 @Mapper
-public interface LocationMapper {
+public interface LocationMybatisMapper {
 
     @Select("select * from gpsinfo")
-    List<Location> findAllLocation();
+    List<LocationMybatis> findAllLocation();
 }

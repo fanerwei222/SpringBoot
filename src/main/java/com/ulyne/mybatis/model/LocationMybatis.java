@@ -4,7 +4,7 @@ package com.ulyne.mybatis.model;
  * 位置实体类
  * Created by fanwei_last on 2017/12/27.
  */
-public class Location {
+public class LocationMybatis {
 
     private String id;
     private String longitude;

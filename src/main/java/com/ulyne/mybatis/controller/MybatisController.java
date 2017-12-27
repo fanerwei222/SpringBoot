@@ -1,13 +1,12 @@
 package com.ulyne.mybatis.controller;
 
-import com.ulyne.mybatis.mapper.LocationMapper;
-import com.ulyne.mybatis.model.Location;
+import com.ulyne.mybatis.mapper.LocationMybatisMapper;
+import com.ulyne.mybatis.model.LocationMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
 public class MybatisController {
 
     @Autowired
-    LocationMapper locationMapper;
+    LocationMybatisMapper locationMapper;
 
     /**
      * 获取所有位置
@@ -31,7 +30,7 @@ public class MybatisController {
     @Transactional
     public List locations() {
 
-        List<Location> locations = locationMapper.findAllLocation();
+        List<LocationMybatis> locations = locationMapper.findAllLocation();
 
         return locations;
     }
