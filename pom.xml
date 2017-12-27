@@ -5,8 +5,9 @@
 
 	<groupId>com.ulyne</groupId>
 	<artifactId>fan</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<version>1.0.0</version>
+	<packaging>war</packaging>
+	<!--<packaging>jar</packaging>-->
 
 	<name>fan</name>
 	<description>Demo project for Spring Boot</description>
@@ -81,6 +82,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
 	</build>
 
 	<repositories>
