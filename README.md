@@ -8,16 +8,16 @@
 有配置
 
 ### 2. 数据库/端口/静态资源文件配置 //application.properties
-里面有注释.
+里面有注释
 
 ### 3. 文件上传模块: //com/ulyne/web/UploadFile
 初步完成吧.v1.0
 
 ### 4. Jdbc连接示例: //com/ulyne/getLocation/GetLocation , jdbc/JdbcTest 都有
-有增删改查等功能实例.
+有增删改查等功能实例
 
 ### 5. websocket 示例 //com/ulyne/webSocket/WebSocketDemo
-简单的栗子.
+简单的栗子
 
 ### 6. 百度地图 //com/ulyne/getLocation/GetLocation 
 有一些基本操作
