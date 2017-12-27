@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link th:href="@{/css/1.css}" rel="stylesheet"/>
+</head>
+<body>
+<!--/*@thymesVar id="title" type="templates"*/-->
+<p th:text="'Hello, ' + ${title}" /><br/>
+
+</body>
+</html>
