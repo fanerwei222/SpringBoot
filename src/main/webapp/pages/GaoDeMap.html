@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+    <base href="//webapi.amap.com/ui/1.0/ui/misc/MarkerList/examples/" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>基本地图展示</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <script src="http://cache.amap.com/lbs/static/es5.min.js"></script>
+    <script src="http://webapi.amap.com/maps?v=1.4.2&key=f69712c5c44f771d30a6daaf65d46ffe"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <!-- UI组件库 1.0 -->
+    <script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="./common.css">
+</head>
+<body>
+<div id="outer-box">
+    <div id="container">
+    </div>
+    <div id="panel" style="background: #6495ED;">
+        <div id="intro">
+            <h3>地图列表展示</h3>
+        </div>
+        <ul id="my-list" style="height: 800px; overflow: auto"></ul>
+    </div>
+</div>
+<script>
+    var data = {};
+    function getContextPath(){
+        var pathName = document.location.pathname;
+        var index = pathName.substr(1).indexOf("/");
+        var result = pathName.substr(0,index+1);
+        return result;
+    }
+    var ctx = "http://192.168.0.222:8080" + getContextPath();
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        zoom:14,
+        center: [110.323295,20.034721]
+    });
+    var res = postAjax("getLocation", data);
+    console.log("--------------******-----------");
+    console.log(res);
+    var point = res.data;
+    for(var i = 0;i<point.length;i++){
+        //创建图标
+        var lat = point[i].latitude;
+        var lng = point[i].longitude;
+        var explainInfo = point[i].explainInfo;
+        var name = point[i].name;
+        var address = point[i].address;
+        var projectName = point[i].projectName;
+        var projectCode = point[i].projectCode;
+        addMarker(lng, lat, projectName, projectCode, name, address, explainInfo);
+    }
+    // 实例化点标记
+    function addMarker(lon, lat, projectName, projectCode, name, address, explainInfo) {
+        marker = new AMap.Marker({
+            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+            position: [lon, lat]
+        });
+        marker.setTitle(name);
+        // 设置label标签
+        marker.setLabel({//label默认蓝框白底左上角显示，样式className为：amap-marker-label
+            offset: new AMap.Pixel(0, -20),//修改label相对于maker的位置
+            content: projectName
+        });
+        marker.on('click', function (e) {
+            //构建信息窗体中显示的内容
+            var info = [];
+            info.push("<div><div><img style=\"float:left;\" src=\" http://webapi.amap.com/images/autonavi.png \"/></div> ");
+            info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>"+projectName+"</b>");
+            info.push("<b> 工程描述:" + explainInfo+ "</b>")
+            info.push("地址 :"+address+"</div></div>");
+            infoWindow = new AMap.InfoWindow({
+                content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+            });
+            infoWindow.open(map, [lon, lat]);
+        });
+        marker.setMap(map);
+    }
+
+    //在指定位置打开信息窗体
+    function openInfo() {
+
+    }
+
+
+    //同步ajax post请求
+    function postAjax(url, data){
+        var res = '';
+        $.ajax({
+            url : ctx + '/'+url,
+            async : false,
+            dataType : 'json',
+            method:'post',
+            data : data,
+            success : function(responseText) {
+                res = responseText;
+            }
+        });
+        return res;
+    }
+
+    AMapUI.loadUI(['misc/MarkerList'], function(MarkerList) {
+
+        var markerList = new MarkerList({
+            //关联的map对象
+            map: map,
+
+            //列表的dom容器的id
+            listContainer: 'my-list',
+
+            //选中状态（通过点击列表或者marker）时在Marker和列表节点上添加的class，可以借此编写css控制选中时的展示效果
+            selectedClassNames: 'selected',
+
+            //返回数据项的Id
+            getDataId: function(dataItem, index) {
+                //index表示该数据项在数组中的索引位置，从0开始，如果确实没有id，可以返回index代替
+                return dataItem.id;
+            },
+            //返回数据项的位置信息，需要是AMap.LngLat实例，或者是经纬度数组，比如[116.789806, 39.904989]
+            getPosition: function(dataItem) {
+                return dataItem.position;
+            },
+            //返回数据项对应的Marker
+            getMarker: function(dataItem, context, recycledMarker) {
+
+                //marker的标注内容
+                var content = dataItem.markerLabel;
+
+                var label = {
+                    offset: new AMap.Pixel(16, 18), //修改label相对于marker的位置
+                    content: content
+                };
+
+                //存在可回收利用的marker
+                if (recycledMarker) {
+                    //直接更新内容返回
+                    recycledMarker.setLabel(label);
+                    return recycledMarker;
+                }
+
+                //返回一个新的Marker
+                return new AMap.Marker({
+                    label: label
+                });
+            },
+            //返回数据项对应的infoWindow
+            getInfoWindow: function(dataItem, context, recycledInfoWindow) {
+
+                var tpl = '<p>项目名称: <%- dataItem.projectName %><p>'
+                    + '<p>工程描述: <%- dataItem.explainInfo %><p>'
+                    + '<p>地址: <%- dataItem.address %><p>';
+
+                //MarkerList.utils.template支持underscore语法的模板
+                var content = MarkerList.utils.template(tpl, {
+                    dataItem: dataItem,
+                    dataIndex: context.index
+                });
+
+                if (recycledInfoWindow) {
+                    //存在可回收利用的infoWindow, 直接更新内容返回
+                    recycledInfoWindow.setContent(content);
+                    return recycledInfoWindow;
+                }
+
+                //返回一个新的InfoWindow
+                return new AMap.InfoWindow({
+                    offset: new AMap.Pixel(0, -23),
+                    content: content
+                });
+            },
+            //返回数据项对应的列表节点
+            getListElement: function(dataItem, context, recycledListElement) {
+
+                var tpl = '<p><%- dataItem.projectName %>：<%- dataItem.name %><p>';
+
+                var content = MarkerList.utils.template(tpl, {
+                    dataItem: dataItem,
+                    dataIndex: context.index
+                });
+
+                if (recycledListElement) {
+                    //存在可回收利用的listElement, 直接更新内容返回
+                    recycledListElement.innerHTML = content;
+                    return recycledListElement;
+                }
+
+                //返回一段html，MarkerList将利用此html构建一个新的dom节点
+                return '<li>' + content + '</li>';
+            }
+
+        });
+
+        //监听选中改变
+        markerList.on('selectedChanged', function(event, info) {
+            //console.log(event, info);
+        });
+
+        //监听Marker和ListElement上的点击
+        markerList.on('markerClick listElementClick', function(event, record) {
+            //console.log(event, record);
+        });
+
+        //构建一个数据项数组，数据项本身没有格式要求，但需要支持getDataId和getPosition
+        var pointData = [];
+        for(var i = 0;i<point.length;i++){
+            //创建图标
+            var id = point[i].id;
+            var lat = point[i].latitude;
+            var lng = point[i].longitude;
+            var explainInfo = point[i].explainInfo;
+            var name = point[i].name;
+            var address = point[i].address;
+            var projectName = point[i].projectName;
+            var projectCode = point[i].projectCode;
+            pointData.push({
+                id : id,
+                position : [lng, lat],
+                markerLabel : name,
+                infoWinContent : explainInfo,
+                address : address,
+                projectName : projectName,
+                projectCode : projectCode
+            })
+        }
+        var data = pointData;
+
+        //展示该数据
+        markerList.render(data);
+    });
+
+
+</script>
+</body>
+</html>

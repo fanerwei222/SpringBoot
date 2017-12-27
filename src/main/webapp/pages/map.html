@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>海南省东方市地址获取</title>
+    <meta name="keywords" content="关键词,5个左右,单个8汉字以内">
+    <meta name="description" content="网站描述，字数尽量空制在80个汉字，160个字符以内！">
+    <link rel="Bookmark" href="favicon.ico" >
+    <link rel="Shortcut Icon" href="favicon.ico" />
+    <script src="https://open.ys7.com/sdk/js/1.1/ezuikit.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#mapContent {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=0nKMGIgQM2Z4o6rhpSduW3OytFnpI2HY"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+</head>
+<body>
+
+<div id="mapContent">
+
+</div>
+
+</body>
+</html>
+<script type="text/javascript">
+
+
+        // 百度地图API功能
+        var data = {};
+        var markerArr = [];
+        function getContextPath(){
+            var pathName = document.location.pathname;
+            var index = pathName.substr(1).indexOf("/");
+            var result = pathName.substr(0,index+1);
+            return result;
+        }
+        var ctx = getContextPath();
+        console.log(ctx);
+        var res = postAjax("getLocation", data);
+        console.log("--------------******-----------");
+        console.log(res);
+        var point = res.data;
+        console.log("--------------******-----------");
+        var map = new BMap.Map("mapContent"); // 创建Map实例
+        map.setMapStyle({style:'light'});
+        map.centerAndZoom(new BMap.Point(108.867261,19.088807), 13); // 初始化地图,设置中心点坐标和地图级别
+        map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
+        map.setCurrentCity("海口"); // 设置地图显示的城市 此项是必须设置的
+        map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        // 添加带有定位的导航控件
+        var navigationControl = new BMap.NavigationControl({
+            // 靠左上角位置
+            anchor : BMAP_ANCHOR_TOP_LEFT,
+            // LARGE类型
+            type : BMAP_NAVIGATION_CONTROL_LARGE,
+            // 启用显示定位
+            enableGeolocation : true
+        });
+        map.addControl(navigationControl);
+        // 添加定位控件
+        var geolocationControl = new BMap.GeolocationControl();
+        geolocationControl.addEventListener("locationSuccess", function(e) {
+            // 定位成功事件
+            var address = '';
+            address += e.addressComponent.province;
+            address += e.addressComponent.city;
+            address += e.addressComponent.district;
+            address += e.addressComponent.street;
+            address += e.addressComponent.streetNumber;
+            //alert("当前定位地址为：" + address);
+        });
+        geolocationControl.addEventListener("locationError", function(e) {
+            // 定位失败事件
+            console.log(e.message);
+        });
+        //画出石山的形状折线
+        var polyline = new BMap.Polyline([
+                new BMap.Point(110.25924,19.953121)
+            ],
+            {strokeColor:"#1E90FF", strokeWeight:6, strokeOpacity:0.9, enableMassClear:false}
+        );
+        map.addControl(geolocationControl);
+        //调用设置图标方法设置从服务器获取到的图标
+        ListPoint(point);
+
+        //循环设置图标
+        function ListPoint(point){
+            //创建图标前先清除地图覆盖物
+            map.clearOverlays();
+            //设置图标
+            for(var i = 0;i<point.length;i++){
+                //创建图标
+                var iconPoint = new BMap.Point();
+                iconPoint.lat = point[i].latitude;
+                iconPoint.lng = point[i].longitude;
+                var id = point[i].id;
+                var explainInfo = point[i].explainInfo;
+                var name = point[i].name;
+                var address = point[i].address;
+                var projectName = point[i].projectName;
+                var projectCode = point[i].projectCode;
+
+                addMarker(iconPoint, id, name , explainInfo, address, projectName, projectCode);
+            }
+        }
+
+        // 编写自定义函数,创建标注
+        function addMarker(point, id, name, explainInfo, address, projectName, projectCode){
+            var id = JSON.stringify(id);
+            var projectNameNew = JSON.stringify(projectName);
+
+            var marker = new BMap.Marker(point);
+            var icon = new BMap.Icon("/img/point.png", new BMap.Size(48,48));
+            marker.setIcon(icon);
+            var label = new BMap.Label(projectName,{offset:new BMap.Size(5,-15)});
+            label.setStyle({ display : "block"});
+            marker.setLabel(label);
+            var sContent ="<div  style='width:500px;height:130px;opacity: 0.9;'>"+
+                "<h4 style='margin:0 0 5px 0;padding:0.2em 0'>"+projectNameNew+"</h4>" +
+                "<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'  >"+"工程描述:"+explainInfo+"</p>" +
+                "<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'  >"+"地址:"+address+"</p>" +
+                "</div>";
+            var infoWindow = new BMap.InfoWindow(sContent);  // 创建信息窗口对象
+            marker.addEventListener("click", function(){
+                map.openInfoWindow(infoWindow,point);
+            },false);
+            map.addOverlay(marker); //添加标注进地图
+            //marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+            markerArr.push(marker);
+
+        }
+
+        //最简单的用法，生成一个marker数组，然后调用markerClusterer类即可。
+        //var markerClusterer = new BMapLib.MarkerClusterer(map, {markers:markerArr});
+        map.addOverlay(polyline);
+        //单击获取点击的经纬度
+        map.addEventListener("click",function(e){
+            //console.log(e.point.lng + "," + e.point.lat);
+            //alert(e.point.lng + "," + e.point.lat);
+        });
+        var b = new BMap.Bounds(new BMap.Point(110.073898,19.95998),new BMap.Point(110.349713,19.84387));
+        try {
+            //BMapLib.AreaRestriction.setBounds(map, b);
+        } catch (e) {
+            alert(e);
+        }
+
+        //同步ajax post请求
+        function postAjax(url, data){
+            var res = '';
+            $.ajax({
+                url : ctx + '/'+url,
+                async : false,
+                dataType : 'json',
+                method:'post',
+                data : data,
+                success : function(responseText) {
+                    res = responseText;
+                }
+            });
+            return res;
+        }
+
+        // 定义一个控件类,即function
+        function ZoomControl(){
+            // 默认停靠位置和偏移量
+            this.defaultAnchor = BMAP_ANCHOR_TOP_RIGHT;
+            this.defaultOffset = new BMap.Size(50, 60);
+        }
+
+        // 通过JavaScript的prototype属性继承于BMap.Control
+        ZoomControl.prototype = new BMap.Control();
+
+        // 自定义控件必须实现自己的initialize方法,并且将控件的DOM元素返回
+        // 在本方法中创建个div元素作为控件的容器,并将其添加到地图容器中
+        var res = postAjax("getLocation", '');
+        console.log("---*----" + res);
+
+        var data = res.data;
+        console.log("---*----");
+        console.log(data[0]);
+        ZoomControl.prototype.initialize = function(map){
+            // 创建DOM元素
+            var div = document.createElement("div");
+            var ul = document.createElement("ul");
+            ul.id="chooseClassic";
+            for(var zpi = 0; zpi < data.length;zpi++ ){
+                var li = document.createElement("li");
+                var radio = document.createElement("input");
+                /* 			  radio.name = "box";
+                 radio.type = "radio";
+                 radio.value = typeDataRes[zpi].id;
+                 li.appendChild(radio);
+                 li.appendChild(document.createTextNode(typeDataRes[zpi].name)); */
+                li.style.fontStyle="normal";
+                li.style.listStyle="none";
+                li.style.padding="0 20px";
+                li.style.border="1px solid #c5c2c2";
+                li.style.height="60px";
+                li.style.width="200px";
+                li.style.lineHeight="30px";
+                li.style.cursor = "pointer";
+
+                li.setAttribute('name', data[zpi].id);
+                li.innerHTML=data[zpi].address;
+                if (zpi==0) {
+                    li.setAttribute('class','selected');
+                }
+                ul.appendChild(li);
+
+            }
+
+            div.appendChild(ul);
+
+            // 设置样式
+            ul.style.fontStyle="normal";
+            ul.style.textAlign="center";
+            ul.style.background="#edf6ff";
+            ul.style.padding="10px 0";
+            ul.style.height="615px";
+            ul.style.overflow="auto";
+            ul.style.border="1px solid #c5c2c2";
+            ul.style.color="#666";
+            /*div.style.cursor = "pointer";
+            div.style.border = "1px solid gray";
+            div.style.backgroundColor = "#9FB6CD";*/
+
+
+            // 绑定事件,点击一次放大两级
+            div.onclick = function(e){
+                //map.setZoom(map.getZoom() + 2);
+            }
+            // 添加DOM元素到地图中
+            map.getContainer().appendChild(div);
+            var first = true;
+
+            // 将DOM元素返回
+            return div;
+        }
+        // 创建控件
+        var myZoomCtrl = new ZoomControl();
+        // 添加到地图当中
+        map.addControl(myZoomCtrl);
+        //切换点位类型
+        $("#chooseClassic li").click(function(){
+            $(this).addClass('selected').siblings().removeClass('selected');
+            var dataNew = {};
+            var typeId = $(this).attr("name");
+            dataNew.id=typeId;
+            var res = postAjax('getOne', dataNew);
+            console.log("--***------------获取点位----------** ");
+            console.log(res);
+            var resData = res.data;
+            var lon = resData[0].longitude;
+            var lat = resData[0].latitude;
+            map.centerAndZoom(new BMap.Point(lon,lat), 18); // 设置中心点坐标和地图级别
+        });
+
+
+
+
+
+</script>
