@@ -1,0 +1,65 @@
+server:
+  #设置端口
+  port: 8080
+  session:
+    timeout: 10
+  tomcat:
+    uri-encoding: utf-8
+
+spring:
+    #设置mysql数据库连接
+    datasource:
+        name: mysql
+        url: jdbc:mysql://localhost:3306/springboot
+        username: root
+        password: 1234
+        driver-class-name: com.mysql.jdbc.Driver
+        max-idle: 10
+        max-wait: 10000
+        minIdle: 3
+        initialSize: 3
+        filters: stat
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    mvc:
+      #配置html文件的位置,默认为src/main/webapp
+      view:
+        prefix: /pages/
+        suffix: .html
+      #静态资源文件
+      static-path-pattern: /**
+
+    thymeleaf:
+      prefix: classpath:/templates/
+      suffix: .html
+      mode: HTML5
+      encoding: UTF-8
+      servlet:
+        content-type: text/html
+      cache: false
+    resources:
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
+
+#mybatis的配置
+mybatis:
+  #实体扫描文件夹
+  type-aliases-package: com.ulyne.mybatis.model
+
+#pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
