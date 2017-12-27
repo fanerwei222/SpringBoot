@@ -30,7 +30,9 @@
 有一些基本操作
 
 ### 9. Mybatis整合 //com/ulyne/mybatis
-有一些基本操作
+有一些基本操作和配置(mybatis没啥配置)
 
+### 10. Jpa整合 //com/ulyne/jpa
+有一些基本操作和配置(配置较mybatis繁琐一些).
 
 
