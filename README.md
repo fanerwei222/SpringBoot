@@ -33,6 +33,9 @@
 有一些基本操作和配置(mybatis没啥配置)
 
 ### 10. Jpa整合 //com/ulyne/jpa
-有一些基本操作和配置(配置较mybatis繁琐一些).
+有一些基本操作和配置(配置较mybatis繁琐一些)
+
+### 11. Redis整合 //com/ulyne/redis
+有一些基本操作
 
 
