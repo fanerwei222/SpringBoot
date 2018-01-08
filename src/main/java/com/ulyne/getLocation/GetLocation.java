@@ -1,5 +1,6 @@
 package com.ulyne.getLocation;
 
+import com.ulyne.importAndExportExcel.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -8,12 +9,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -254,4 +253,29 @@ public class GetLocation {
 
         return result;
     }
+
+    /**
+     * 导出地址数据
+     * @param request
+     * @return
+     */
+    @RequestMapping("/exportData")
+    @ResponseBody
+    public Map<String, Object> exportData(HttpServletRequest request, HttpServletResponse response){
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, Object>> list = jdbcTemplate.queryForList(selectAllSql);
+
+        Map<String,String> headMap = new HashMap<>();
+        headMap.put("longitude", "经度");
+        headMap.put("latitude", "纬度");
+        headMap.put("explainInfo", "信息");
+        headMap.put("address", "地址");
+        headMap.put("projectName", "项目名称");
+        headMap.put("projectCode", "项目编号");
+        String title = "东方市数据统计表";
+        ExcelUtil.downloadExcelFile(title,headMap,list,response);
+
+        return result;
+    }
+
 }
