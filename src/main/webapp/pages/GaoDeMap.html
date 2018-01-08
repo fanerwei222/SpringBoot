@@ -22,6 +22,7 @@
     <div id="panel" style="background: #6495ED;">
         <div id="intro">
             <h3>地图列表展示</h3>
+            <button id="exportExcel">导出数据</button>
         </div>
         <ul id="my-list" style="height: 800px; overflow: auto"></ul>
     </div>
@@ -34,7 +35,9 @@
         var result = pathName.substr(0,index+1);
         return result;
     }
-    var ctx = "http://192.168.0.222:8080" + getContextPath();
+    var curWwwPath = window.document.location.origin;
+    console.log(curWwwPath);
+    var ctx = curWwwPath + getContextPath();
     var map = new AMap.Map('container', {
         resizeEnable: true,
         zoom:14,
@@ -231,6 +234,16 @@
 
         //展示该数据
         markerList.render(data);
+    });
+
+    /**
+     * 导出数据
+     * @type {Element}
+     */
+    var exportBtn = document.getElementById("exportExcel");
+    exportBtn.addEventListener('click', function (event) {
+        location.href = ctx + '/exportData';
+        console.log("导出数据.");
     });
 
 
