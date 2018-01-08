@@ -28,9 +28,9 @@ public class Property {
      * webSocket 配置
      * @return
      */
-    @Bean
+    /*@Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
-    }
+    }*/
 
 }
